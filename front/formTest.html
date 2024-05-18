@@ -1,0 +1,70 @@
+<!-- 引入 DOMPurify 库 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.3/purify.min.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastifyTest</title>
+</head>
+<body>
+<h1>超级传送</h1>
+<form id="myForm">
+    <label for="name">姓名:</label>
+    <input type="text" id="name" name="name" required><br>
+    <label for="email">邮箱:</label>
+    <input type="email" id="email" name="email" required><br>
+    <button type="button" onclick="submitForm()">提交</button>
+</form>
+
+<!-- 添加一个用于显示姓名的 div -->
+<div id="resultDiv"></div>
+
+<script>
+    function submitForm() {
+        const form = document.getElementById('myForm');
+        const formData = new FormData(form);
+
+        // 使用 FormData.entries() 遍历表单字段
+        const data = {};
+        for (let [key, value] of formData.entries()) {
+            data[key] = value;
+        }
+
+        fetch('http://localhost:3000/submit-form', {
+            method: 'POST',
+            body: JSON.stringify(data), // 将数据转为 JSON 字符串
+            headers: {
+                'Content-Type': 'application/json' // 设置请求头为 application/json
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+
+                console.log(data);
+
+                // 处理 JSON 格式的响应
+                if (data.success) {
+                    // displayResult(`姓名：${data.data.name}, 邮箱：${data.data.email}`);
+                    displayResult(data.data.name);
+                } else {
+                    displayResult('提交失败，请重试！');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    // 动态添加用于显示姓名的 div
+    function displayResult(name) {
+        const resultDiv = document.getElementById('resultDiv');
+
+        // 使用 DOMPurify.sanitize() 清理 HTML 内容
+        const sanitizedResult = DOMPurify.sanitize(name, { ALLOWED_TAGS: ['div'], ALLOWED_ATTR: [] });
+        console.log(sanitizedResult);
+        resultDiv.innerHTML = `<div>${sanitizedResult}</div>`;
+    }
+</script>
+</body>
+</html>

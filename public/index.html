@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Resources</title>
+    <style>
+        body {
+            display: flex;
+            font-family: Arial, sans-serif;
+        }
+        .menu {
+            width: 200px;
+            background-color: #f0f0f0;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .menu a {
+            display: block;
+            padding: 10px;
+            color: #333;
+            text-decoration: none;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .menu a:hover {
+            background-color: #ddd;
+        }
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .section ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .section ul li {
+            margin-bottom: 10px;
+        }
+        .section ul li a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        .section ul li a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="menu">
+    <a href="/front/DOMXss.html">XSS</a>
+    <a href="/login.html">Login</a>
+    <a href="/front/students.html">SQL Injection</a>
+</div>
+<div class="content">
+    <div id="xss" class="section">
+        <h2>XSS (Cross-Site Scripting)</h2>
+        <ul>
+            <li><a href="https://owasp.org/www-community/attacks/xss/" target="_blank">OWASP XSS</a></li>
+            <li><a href="https://portswigger.net/web-security/cross-site-scripting" target="_blank">PortSwigger XSS</a></li>
+        </ul>
+    </div>
+    <div id="login" class="section">
+        <h2>Login</h2>
+        <ul>
+            <li><a href="https://owasp.org/www-project-top-ten/" target="_blank">OWASP Top Ten</a></li>
+            <li><a href="https://www.freebuf.com/" target="_blank">FreeBuf</a></li>
+        </ul>
+    </div>
+    <div id="sql-injection" class="section">
+        <h2>SQL Injection</h2>
+        <ul>
+            <li><a href="https://owasp.org/www-community/attacks/SQL_Injection" target="_blank">OWASP SQL Injection</a></li>
+            <li><a href="https://portswigger.net/web-security/sql-injection" target="_blank">PortSwigger SQL Injection</a></li>
+        </ul>
+    </div>
+    <div id="security-websites" class="section">
+        <h2>安全网站</h2>
+        <ul>
+            <li><a href="https://owasp.org/" target="_blank">OWASP</a></li>
+            <li><a href="https://www.freebuf.com/" target="_blank">FreeBuf</a></li>
+            <li><a href="https://www.exploit-db.com/" target="_blank">Exploit Database</a></li>
+        </ul>
+    </div>
+    <div id="vulnerability-websites" class="section">
+        <h2>安全漏洞网站</h2>
+        <ul>
+            <li><a href="https://cve.mitre.org/" target="_blank">CVE</a></li>
+            <li><a href="https://www.cvedetails.com/" target="_blank">CVE Details</a></li>
+            <li><a href="https://nvd.nist.gov/" target="_blank">NVD (National Vulnerability Database)</a></li>
+        </ul>
+    </div>
+    <div id="security-tools" class="section">
+        <h2>安全工具</h2>
+        <ul>
+            <li><a href="https://gchq.github.io/CyberChef/" target="_blank">CyberChef</a></li>
+            <li><a href="https://www.kali.org/tools/" target="_blank">Kali Tools</a></li>
+            <li><a href="https://www.metasploit.com/" target="_blank">Metasploit</a></li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

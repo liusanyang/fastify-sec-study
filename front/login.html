@@ -1,0 +1,64 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+</head>
+<body>
+
+<h2>Login</h2>
+
+<form id="loginForm">
+  <label for="username">Username:</label>
+  <input type="text" id="username" name="username" required>
+
+  <br>
+
+  <label for="password">Password:</label>
+  <input type="password" id="password" name="password" required>
+
+  <br>
+
+  <button type="submit">Login</button>
+</form>
+
+<p id="errorMessage"></p>
+
+<script>
+  document.getElementById('loginForm').addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    try {
+      const response = await fetch('/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+      console.log(response.redirected);
+      console.log(response.url);
+
+      if (response.redirected) {
+        // 登录成功，重定向到指定页面
+        console.log(response.url);
+        window.location.href = response.url;
+      } else {
+        // 登录失败，显示错误消息
+        const errorMessage = await response.text();
+        document.getElementById('errorMessage').textContent = errorMessage;
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      document.getElementById('errorMessage').textContent = 'Internal Server Error';
+    }
+  });
+</script>
+
+</body>
+</html>
