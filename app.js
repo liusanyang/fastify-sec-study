@@ -29,8 +29,13 @@ fastify.register(fastifyStatic, {
   root: path.join(__dirname, 'public'),
   prefix: '/', // 可根据需要修改前缀
 });
-
-
+// 导入 fastify/formbody 插件，用于解析表单数据
+fastify.register(fastifyFormbody);
+// 注册 fastify/cors 插件
+fastify.register(fastifyCors, {
+  origin: true, // 允许所有来源
+  methods: ['GET', 'POST', 'DELETE', 'PUT'],
+});
 fastify.register(fastifyMySQL, {
   promise: true,
   connectionString: 'mysql://root:Pass1234@localhost/studentsMgt',
@@ -51,25 +56,18 @@ const createStudentTable = async (fastify) => {
   client.release();
 };
 
-// 导入 fastify/formbody 插件，用于解析表单数据
-fastify.register(fastifyFormbody);
-// 注册 fastify/cors 插件
-fastify.register(fastifyCors, {
-  origin: true, // 允许所有来源
-  methods: ['GET', 'POST', 'DELETE', 'PUT'],
-});
-
 // 路由定义
 fastify.get('/', async (request, reply) => {
-
-  return reply.sendFile('login.html');
+  return reply.sendFile('index.html');
 });
-
 fastify.get('/DOMXss', async (request, reply) => {
+  const filePath = path.join(__dirname, 'front', 'xssTest.html');
+  console.log(filePath);
+  // console.log(reply.sendFile(filePath))
+  return reply.sendFile(filePath);
 
-  return reply.sendFile('DomXss.html');
+  // return reply.sendFile('xssTest.html');
 });
-
 fastify.post('/login', async (request, reply) => {
   try {
     const { username, password } = request.body;
@@ -88,14 +86,11 @@ fastify.post('/login', async (request, reply) => {
     reply.code(500).send({ success: false, message: 'Internal Server Error' });
   }
 });
-
-
 fastify.get('/students', async (request, reply) => studentController.getAllStudents(fastify));
 fastify.get('/students/:id', async (request, reply) => studentController.getStudentById(fastify, request));
 fastify.post('/students', async (request, reply) => studentController.addStudent(fastify, request));
 fastify.put('/students/:id', async (request, reply) => studentController.updateStudent(fastify, request));
 fastify.delete('/students/:id', async (request, reply) => studentController.deleteStudent(fastify, request));
-
 
 // 启动服务器
 const start = async () => {

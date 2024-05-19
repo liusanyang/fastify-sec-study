@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DOMXssTest</title>
+</head>
+<body>
+&amp;
+<!-- JavaScript 中的 Unicode 转义字符不会在html中被decode  -->
+<!--<a id="bb" href="#" onclick="\u0061\u006c\u0065\u0072\u0074\u0028\u0031\u0029"> Test Me</a>-->
+<br>
+<a id="bb" href="#"> Test Me</a><br>
+
+<a href="javascript:alert('XSS Attack')">Click Me</a><br>
+
+<a href="javascript:&#x61;lert('XSS Attack')">Click Me</a><br>
+
+<a href="#" onclick="javascript:document.getElementById('contentholder').textContent = '&ltscript>alert(XSS)</script>'; return false;">Click Me</a><br>
+
+<div id="contentholder"></div>
+
+</body>
+<script>
+    // var x = "<img src=x onerror=alert('aaa')>";
+    // var d = document.createElement('div');
+    // d.innerHTML = x;
+    // document.body.appendChild(d);
+
+    //============在js中html编码不会被decode===========
+    document.writeln("<br/>===============================================<br/>");
+    // var ESAPI = require('node-esapi');
+    // var companyName = 'Acme & Co';
+    var x = document.createElement("input");
+    // x.setAttribute("value", companyName);
+    x.setAttribute("value", 'Acme &amp; Co');
+    document.body.appendChild(x);
+
+    //=============将危险数据插入事件函数执行============
+    document.writeln("<br/>===============================================<br/>");
+    var x = document.createElement("a");
+    x.href="#";
+    // In the line of code below, the encoded data on the right (the second argument to setAttribute)
+    // is an example of untrusted data that was properly JavaScript encoded but still executes.
+    // \u0061\u006c\u0065\u0072\u0074\u0028\u0032\u0032\u0029 是 JavaScript 中的 Unicode 转义字符序列，它表示的是 alert(22)
+    x.setAttribute("onclick", "\u0061\u006c\u0065\u0072\u0074\u0028\u0032\u0032\u0029");
+    var y = document.createTextNode("Click To Test");
+    x.appendChild(y);
+    document.body.appendChild(x);
+
+    //==========在js上下文中插入js的Unicode编码========
+    document.writeln("<br/>===============================================<br/>");
+    //The following does NOT work because the event handler is being set to a string.
+    //"alert(7)" is JavaScript encoded.
+    // document.getElementById("bb").onclick = "\u0061\u006c\u0065\u0072\u0074\u0028\u0037\u0029";
+
+    //The following does NOT work because the event handler is being set to a string.
+    // document.getElementById("bb").onmouseover = "testIt";
+
+    //The following does NOT work because of the encoded "(" and ")".
+    //"alert(77)" is JavaScript encoded.
+    // document.getElementById("bb").onmouseover = \u0061\u006c\u0065\u0072\u0074\u0028\u0037\u0037\u0029;
+
+    //The following DOES WORK
+    // eval("document.getElementById('bb').onmouseover = " + "\u0061\u006c\u0065\u0072\u0074\u0028\u0037\u0037\u0029;");
+    // document.getElementById('bb').onmouseover = Function("\u0061\u006c\u0065\u0072\u0074\u0028\u0037\u0037\u0029");
+
+    //The following does NOT work because of the encoded ";".
+    //"testIt;testIt" is JavaScript encoded.
+    // document.getElementById("bb").onmouseover = \u0074\u0065\u0073\u0074\u0049\u0074\u003b\u0074\u0065\u0073\u0074\u0049\u0074;
+    // eval("document.getElementById('bb').onmouseover = " + "\u0074\u0065\u0073\u0074\u0049\u0074\u003b\u0074\u0065\u0073\u0074\u0049\u0074;");
+
+    //The following DOES WORK because the encoded value is a valid variable name or function reference.
+    //"testIt" is JavaScript encoded
+    document.getElementById("bb").onmouseover = \u0074\u0065\u0073\u0074\u0049\u0074;
+
+    function testIt() {
+        alert("I was called.");
+    }
+
+    document.writeln("<br/>===============================================<br/>");
+    //==========JavaScript 中还有其他地方接受 JavaScript 编码作为有效的可执行代码========
+    // for (var b = 0; b < 10; b++) {
+    //     document
+    //         .writeln("Hello World");
+    // }
+    // window
+    //     .eval
+    //     .write(111111111);
+    document.writeln("\u0074\u0065\u0073\u0074\u0049\u0074;");
+    for(var \u0062=0; \u0062 < 10; \u0062++){
+        \u0064\u006f\u0063\u0075\u006d\u0065\u006e\u0074
+            .\u0077\u0072\u0069\u0074\u0065\u006c\u006e
+            ("\u0048\u0065\u006c\u006c\u006f\u0020\u0057\u006f\u0072\u006c\u0064");
+    }
+    \u0077\u0069\u006e\u0064\u006f\u0077
+        .\u0065\u0076\u0061\u006c
+    \u0064\u006f\u0063\u0075\u006d\u0065\u006e\u0074
+        .\u0077\u0072\u0069\u0074\u0065(111111111);
+
+    document.writeln("<br/>===============================================<br/>");
+    //==========url编码========
+    //JavaScript编码 ESAPI.encoder().encodeForJavascript()
+    //HTML编码 ESAPI.encoder().encodeForHTML()
+    var x = document.createElement("a");
+    x.setAttribute("href", encodeURIComponent("/test?param=value&next=path#anchor"));
+    var y = document.createTextNode("Click Me To Test");
+    x.appendChild(y);
+    document.body.appendChild(x);
+
+    document.writeln("<br/>===============================================<br/>");
+    //==========安全的DOM填充函数========
+    // element.textContent = untrustedData;  //does not execute code
+    document.getElementById("contentholder").textContent = '<a href="javascript:alert(\'XSS Attack\')">Click Me</a>';
+
+</script>
+</html>
